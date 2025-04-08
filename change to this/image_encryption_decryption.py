@@ -1,6 +1,3 @@
-
-# Image Encryption Decryption
-
 # imported necessary library
 import tkinter
 from tkinter import *
@@ -17,8 +14,17 @@ import random
 
 #created main window
 window = Tk()
-window.geometry("1000x700")
+window.geometry("1100x700")
 window.title("Image Encryption Decryption")
+window.configure(bg="lightblue")
+
+# Load background image
+bg_image = Image.open("bg1.jpg") 
+bg_image = bg_image.resize((1100, 700), Image.LANCZOS)
+bg_photo = ImageTk.PhotoImage(bg_image)
+
+bg_label = tk.Label(window, image=bg_photo)
+bg_label.place(x=0, y=0, relwidth=1, relheight=1)
 
 # defined variable
 global count, emig
@@ -90,16 +96,17 @@ def open_img():
 def en_fun():
     global x, image_encrypted, key
     # print(x)
-    image_input = cv2.imread(x, 0)# 'C:/Users/aakas/Documents/flower.jpg'
+    image_input = cv2.imread(x, 0)# 
     (x1, y) = image_input.shape
     image_input = image_input.astype(float) / 255.0
     # print(image_input)
 
     mu, sigma = 0, 0.1  # mean and standard deviation
     key = np.random.normal(mu, sigma, (x1, y)) + np.finfo(float).eps
-    # print(key)
+    print('key =',key)
     image_encrypted = image_input / key
-    cv2.imwrite('image_encrypted.jpg', image_encrypted * 255)
+    # cv2.imwrite('image_encrypted.jpg', image_encrypted * 255)
+    cv2.imwrite('image_encrypted.jpg', np.clip(image_encrypted * 255.0, 0, 255).astype(np.uint8))
 
     imge = Image.open('image_encrypted.jpg')
     imge = ImageTk.PhotoImage(imge)
@@ -111,7 +118,8 @@ def en_fun():
 def de_fun():
     global image_encrypted, key
     image_output = image_encrypted * key
-    image_output *= 255.0
+    # image_output *= 255.0
+    image_output = np.clip(image_output * 255.0, 0, 255).astype(np.uint8)
     cv2.imwrite('image_output.jpg', image_output)
 
     imgd = Image.open('image_output.jpg')
@@ -147,48 +155,41 @@ def save_img():
     eimg.save(filename)
     mbox.showinfo("Success", "Encrypted Image Saved Successfully!")
 
-
-
-# top label
-start1 = tk.Label(text = "Image Encryption\nDecryption", font=("Arial", 40), fg="magenta") # same way bg
-start1.place(x = 350, y = 10)
-
-# original image label
-start1 = tk.Label(text = "Original\nImage", font=("Arial", 40), fg="magenta") # same way bg
-start1.place(x = 100, y = 270)
-
-# edited image label
-start1 = tk.Label(text = "Encrypted\nDecrypted\nImage", font=("Arial", 40), fg="magenta") # same way bg
-start1.place(x = 700, y = 230)
-
-# choose button created
-chooseb = Button(window, text="Choose",command=open_img,font=("Arial", 20), bg = "orange", fg = "blue", borderwidth=3, relief="raised")
-chooseb.place(x =30 , y =20 )
-
-# save button created
-saveb = Button(window, text="Save",command=save_img,font=("Arial", 20), bg = "orange", fg = "blue", borderwidth=3, relief="raised")
-saveb.place(x =170 , y =20 )
-
-# Encrypt button created
-enb = Button(window, text="Encrypt",command=en_fun,font=("Arial", 20), bg = "light green", fg = "blue", borderwidth=3, relief="raised")
-enb.place(x =150 , y =620 )
-
-# decrypt button created
-deb = Button(window, text="Decrypt",command=de_fun,font=("Arial", 20), bg = "orange", fg = "blue", borderwidth=3, relief="raised")
-deb.place(x =450 , y =620 )
-
-# reset button created
-resetb = Button(window, text="Reset",command=reset,font=("Arial", 20), bg = "yellow", fg = "blue", borderwidth=3, relief="raised")
-resetb.place(x =800 , y =620 )
-
-# function created for exiting
+# # function created for exiting
 def exit_win():
     if mbox.askokcancel("Exit", "Do you want to exit?"):
         window.destroy()
 
-# exit button created
-exitb = Button(window, text="EXIT",command=exit_win,font=("Arial", 20), bg = "red", fg = "blue", borderwidth=3, relief="raised")
-exitb.place(x =880 , y =20 )
+
+# Title label
+tk.Label(window, text="🌀 Image Encryption\nDecryption 🌀", 
+         font=("Comic Sans MS", 40, "bold"), fg="black").place(x=300, y=10)
+
+# Labels
+tk.Label(window, text="🖼️ Original\nImage", 
+         font=("Comic Sans MS", 25, "bold"), fg="#FF1493", bg="#FFFACD").place(x=80, y=270)
+
+tk.Label(window, text="🔐 Encrypted / Decrypted\nImage", 
+         font=("Comic Sans MS", 25, "bold"), fg="#1E90FF", bg="#E0FFFF").place(x=700, y=230)
+
+# Buttons
+tk.Button(window, text="📁 Choose", command=open_img,
+          font=("Comic Sans MS", 16), bg="orange", fg="blue", borderwidth=4, relief="groove").place(x=30, y=20)
+
+tk.Button(window, text="💾 Save", command=save_img,
+          font=("Comic Sans MS", 16), bg="orange", fg="blue", borderwidth=4, relief="groove").place(x=170, y=20)
+
+tk.Button(window, text="🔐 Encrypt", command=en_fun,
+          font=("Comic Sans MS", 16), bg="#90EE90", fg="blue", borderwidth=4, relief="groove").place(x=150, y=620)
+
+tk.Button(window, text="🔓 Decrypt", command=de_fun,
+          font=("Comic Sans MS", 16), bg="lightcoral", fg="blue", borderwidth=4, relief="groove").place(x=450, y=620)
+
+tk.Button(window, text="🔄 Reset", command=reset,
+          font=("Comic Sans MS", 16), bg="yellow", fg="blue", borderwidth=4, relief="groove").place(x=800, y=620)
+
+tk.Button(window, text="❌ EXIT", command=exit_win,
+          font=("Comic Sans MS", 16), bg="red", fg="white", borderwidth=4, relief="groove").place(x=950, y=20)
 
 
 window.protocol("WM_DELETE_WINDOW", exit_win)
