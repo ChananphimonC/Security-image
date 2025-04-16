@@ -80,7 +80,7 @@ def save_img():
         messagebox.showerror("Error", "No image to encrypt and save.")
         return
 
-    filename = filedialog.asksaveasfilename(filetypes=[("Encrypted Image", "*.*")])
+    filename = filedialog.asksaveasfilename(defaultextension=".eimg", filetypes=[("Encrypted Image", "*.*")])
     if filename:
         with open(filename, 'wb') as f:
             pickle.dump({
